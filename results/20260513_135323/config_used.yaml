@@ -1,0 +1,24 @@
+max_frames: 1000
+models:
+- conf: 0.25
+  device: cpu
+  half: false
+  imgsz: 640
+  iou: 0.45
+  label: yolo26n
+  path: weights/yolo26n.pt
+  type: yolo
+- conf: 0.25
+  device: cpu
+  half: false
+  imgsz: 640
+  iou: 0.45
+  label: yolo_fasternet
+  path: weights/yolo_fasternet.pt
+  type: yolo
+output_dir: results
+resolution: null
+run_id: '20260513_135323'
+save_frames: false
+source: videos/cars.mp4
+warmup_frames: 10

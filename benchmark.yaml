@@ -1,0 +1,66 @@
+# ─────────────────────────────────────────────────────────────────
+# benchmark.yaml  —  example configuration file
+# Run:  python benchmark_runner.py --config benchmark.yaml
+# ─────────────────────────────────────────────────────────────────
+
+# ── Video / image source ──────────────────────────────────────────
+# Can be:
+#   - path to a video file  (e.g. "videos/cars.mp4")
+#   - integer 0/1/2 for a webcam
+#   - path to a directory of images (not yet, extend SourceReader)
+source: "videos/cars.mp4"
+
+# Stop after this many frames (null = full video)
+max_frames: 500
+
+# Resize every frame to [W, H] before inference — ensures a fair comparison.
+# Set null to use native video resolution.
+resolution: [1280, 720]
+
+# ── Warm-up ───────────────────────────────────────────────────────
+# Frames run before recording starts (warms up CUDA kernels, caches, etc.)
+warmup_frames: 20
+
+# ── Models ───────────────────────────────────────────────────────
+# Add as many models as you like; they are run sequentially.
+models:
+
+  # -- Baseline YOLO (e.g. vanilla YOLOv8n) --
+  - path: "weights/yolo26n.pt"
+    type: yolo            # "yolo" | "flow-count"
+    label: "YOLOv26n-baseline"
+    device: "auto"        # "auto" → cuda:0 if available, else cpu
+    imgsz: 640
+    conf: 0.25
+    iou: 0.45
+    half: false           # true = FP16 (GPU only)
+
+  # -- FasterNet-backed YOLO candidate --
+  - path: "weights/yolo26n_fasternet.pt"
+    type: yolo
+    label: "YOLOv26n-FasterNet"
+    device: "auto"
+    imgsz: 640
+    conf: 0.25
+    iou: 0.45
+    half: false
+
+  # -- Example: Flow-Count baseline --
+  # - path: "weights/flowcount_baseline.pt"
+  #   type: flow-count
+  #   label: "FlowCount-baseline"
+  #   device: "auto"
+
+  # -- Example: Flow-Count with FasterNet backbone --
+  # - path: "weights/flowcount_fasternet.pt"
+  #   type: flow-count
+  #   label: "FlowCount-FasterNet"
+  #   device: "auto"
+
+# ── Output ───────────────────────────────────────────────────────
+output_dir: "results"
+# run_id is auto-generated from timestamp if omitted
+# run_id: "my_custom_run"
+
+# Save annotated frames to disk (slow; useful for visual QA)
+save_frames: false
